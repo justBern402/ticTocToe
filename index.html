@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Documents</title>
+</head>
+
+<body class="flex justify-center items-center h-screen bg-blue-100">
+
+    <div id="app">
+
+        <h1 class="font-serif text-center py-5 "><span class="font-bold text-5xl">Tic</span>~<span
+                class="text-3xl">Toc</span>~<span class="font-bold text-5xl">Toe</span></h1>
+
+        <div v-if="showBoard"
+            class="grid grid-cols-3 lg:w-108 md:w-100 w-90 px-[5px] lg:pr-1 md:pr-1 pr-10 lg:h-95 rounded-md shadow-lg border border-gray-200 cursor-pointer">
+            <div v-for="(row, rowIndex) in boardCells">
+                <div v-for="(cell, colIndex) in row" @click="cellClicked(rowIndex ,colIndex)"
+                    class="bg-gray-400 w-25 h-25 m-5 rounded-md " :class="{
+                'text-2xl text-center pt-10 font-bold text-pink-600 pt-3 hover:bg-red-100': cell ==='X',
+                'text-2xl text-center pt-10 font-bold text-blue-600 pt-3 hover:bg-blue-100': cell ==='O',
+                }">
+                    {{cell}}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center mt-5 font-thin text-3xl">
+            <h1> {{message}} </h1>
+            <button v-if="hideButton" @click="startGAme"
+                class="text-3xl font-semibold dark:bg-gray-800 border-3 border-gray-200 py-4 px-3 rounded-full text-white hover:bg-blue-800 hover:text-black cursor-pointer">Start
+                Game!</button>
+                
+        </div>
+
+
+    </div>
+
+
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    boardCells: [
+                        ["", "", "",],
+                        ["", "", "",],
+                        ["", "", "",],
+                    ],
+
+                    message: `Let's Play`,
+                    currentPlayer: `X`,
+                    showBoard: false,
+                    hideButton: true,
+                }
+            },
+            methods: {
+
+                startGAme() {
+                    this.showBoard = true;
+                     this.hideButton = false;
+                },
+
+                cellClicked(row, col) {
+                    if (this.boardCells[row][col] === "") {
+                        this.boardCells[row][col] = this.currentPlayer;
+
+                        if (this.isWinner(this.currentPlayer)) {
+                            this.message = (`Player ${this.currentPlayer} wins!`);
+                            setTimeout(() => {
+                                this.resetGame();
+                            }, 1500);
+                        } else if (this.gameDraw(this.currentPlayer)) {
+                            this.message = ('It`s a Draw')
+                            setTimeout(() => {
+                                this.resetGame();
+                            }, 2000);
+                        } else {
+                            if (this.currentPlayer == 'X') {
+                                this.currentPlayer = 'O';
+                                this.message = (`Player ${this.currentPlayer} turn!`);
+                            } else {
+                                if (this.currentPlayer = 'X')
+                                    this.message = (`Player ${this.currentPlayer} turn!`);
+                            }
+                        }
+                    }
+                },
+
+                isWinner(user) {
+                    for (let row = 0; row < 3; row++) {
+                        if (this.boardCells[row][0] == user
+                            && this.boardCells[row][1] == user
+                            && this.boardCells[row][2] == user) {
+                            return true;
+                        }
+                    }
+                    for (let col = 0; col < 3; col++) {
+                        if (this.boardCells[0][col] == user
+                            && this.boardCells[1][col] == user
+                            && this.boardCells[2][col] == user) {
+                            return true;
+                        }
+                    }
+                    if (this.boardCells[0][0] == user
+                        && this.boardCells[1][1] == user
+                        && this.boardCells[2][2] == user) {
+                        return true;
+                    }
+                    if (this.boardCells[0][2] == user
+                        && this.boardCells[1][1] == user
+                        && this.boardCells[2][0] == user) {
+                        return true;
+                    }
+                },
+
+                gameDraw() {
+                    for (let row = 0; row < 3; row++) {
+                        for (let col = 0; col < 3; col++) {
+                            if (this.boardCells[row][col] === '') {
+                                return false;
+                            }
+                        }
+                    }
+                    return !this.isWinner('X') && !this.isWinner('O');
+                },
+
+                resetGame() {
+                    this.boardCells = [
+                        ["", "", ""],
+                        ["", "", ""],
+                        ["", "", ""]
+                    ],
+
+                        this.currentPlayer = 'X';
+                    this.message = `Play Again!`;
+                },
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>
